@@ -1,0 +1,44 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment variables
+.env
+client/.env
+server/.env
+
+# Build directories
+dist/
+client/dist/
+server/dist/
+
+# Vite cache
+.vite
+
+# IDE-specific files
+.vscode/
+*.sublime-workspace
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.swp
+
+# Build output
+build/
+out/
+coverage/
+
+# Misc
+*.local
+*.env.local

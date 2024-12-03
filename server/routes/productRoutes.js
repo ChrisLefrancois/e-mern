@@ -53,4 +53,29 @@ router.get('/', async (req, res) => {
 });
 
 
+// Get a specific product by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    // Find product by ID
+    const product = await Product.findById(productId)
+      .populate('videoGameDetails.console', 'name') // Populates console name
+      .populate('videoGameDetails.genre', 'name')   // Populates genre name
+      .populate('cardDetails.sport', 'name')       // Populates sport name (for cards)
+      .populate('cardDetails.game', 'name')        // Populates game name (for TCG)
+      .populate('cardDetails.set', 'name');        // Populates set name (for TCG)
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.status(200).json(product);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 module.exports = router;

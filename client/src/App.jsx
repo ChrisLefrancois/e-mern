@@ -1,19 +1,23 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes} from 'react-router';
+import Navbar from '/components/Navbar';
 
-function App() {
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    axios.get('/api')
-      .then(response => setMessage(response.data))
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
-
+const HomePage = () => {
   return (
     <div>
-      <h1>{message}</h1>
     </div>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" exact element={<HomePage />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,10 +1,11 @@
 const express = require('express');
 const Product = require("../models/Product");
+const adminMiddleware = require('../middleware/adminMiddleware');
 
 const router = express.Router();
 
 // Create a new product
-router.post('/create', async (req, res) => {
+router.post('/create', adminMiddleware, async (req, res) => {
   try {
     const { name, type, price, quantity, image, videoGameDetails, cardDetails } = req.body;
 
@@ -78,5 +79,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+
+// Delete product
+router.delete('/delete/:id', adminMiddleware, async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.status(200).json({ message: 'Product deleted' });
+  } catch (err) {
+    res.status(400).json({ message: 'Error deleting product', error: err.message });
+  }
+});
 
 module.exports = router;

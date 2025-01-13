@@ -6,6 +6,9 @@ import Signup from '/pages/signup/Signup';
 import Login from '/pages/login/Login';
 import ProductsPage from '/pages/products/ProductsPage';
 import SingleProductPage from '/pages/singleproduct/SingleProductPage';
+import AdminPage from '/pages/admin/adminPage';
+import { AuthProvider } from '../context/AuthContext';
+import PrivateRoute from '../components/PrivateRoute';
 
 const HomePage = () => {
   return (
@@ -16,15 +19,21 @@ const HomePage = () => {
 
 function App() {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/products/:id" element={<SingleProductPage />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:id" element={<SingleProductPage />} />
+          <Route
+            path="/admin"
+            element={<PrivateRoute element={<AdminPage />} />}
+          />
+        </Routes>
+      </Router>
+    // </AuthProvider>
   );
 }
 

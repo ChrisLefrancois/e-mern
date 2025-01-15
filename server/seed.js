@@ -7,6 +7,7 @@ const Genre = require('./models/Genre');
 const Sport = require('./models/Sport');
 const Tcg = require('./models/Tcg');
 const Set = require('./models/Set');
+const User = require('./models/User');
 
 // // Connect to MongoDB
 mongoose
@@ -23,6 +24,7 @@ const seedData = async () => {
     await Sport.deleteMany({});
     await Tcg.deleteMany({});
     await Set.deleteMany({});
+    await User.deleteMany({});
 
     // Create Consoles
     await Console.insertMany([
@@ -57,6 +59,11 @@ const seedData = async () => {
       { name: 'Base Set', tcg: 'ObjectId_of_Pokémon' },
       { name: 'Zendikar Rising', tcg: 'ObjectId_of_Magic' },
     ]);
+
+    await User.insertMany([
+      {email: "a@a.a", password: "123123", name: "bob" },
+      {email: "chris@gmail.com", password: "123123", name: "chris", role: "admin" }
+    ])
 
     console.log('Database seeded successfully');
   } catch (err) {

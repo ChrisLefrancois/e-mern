@@ -7,15 +7,11 @@ import Login from '/pages/login/Login';
 import ProductsPage from '/pages/products/ProductsPage';
 import SingleProductPage from '/pages/singleproduct/SingleProductPage';
 import AdminPage from '/pages/admin/adminPage';
+import HomePage from '/pages/home/homePage';
 import { AuthProvider } from '../context/AuthContext';
 import PrivateRoute from '../components/PrivateRoute';
 
-const HomePage = () => {
-  return (
-    <div>
-    </div>
-  );
-};
+
 
 function App() {
   return (
@@ -23,6 +19,7 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/products" element={<ProductsPage />} />

@@ -2,10 +2,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: #000080;
   padding: 1rem 2rem;
   color: white;
-  width: 95%;
+  /* width: 95%; */
 }
 
 .navbar-brand {

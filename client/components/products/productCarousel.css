@@ -5,16 +5,19 @@
   background-color: transparent;
   outline: none;
 }
-
 .product-card {
   text-align: center;
   padding: 20px;
+  border: none !important; /* Remove border */
   border-radius: 8px;
+  background-color: transparent;
+  position: relative;
 }
 
 .product-image {
-  width: 100%;
+  width: 75%; /* Adjust image size to be about half */
   height: auto;
+  margin: 0 auto; /* Center the image */
   border-radius: 8px;
 }
 
@@ -28,8 +31,8 @@
 .product-name {
   font-size: 1rem;
   margin: 10px 0 5px;
-  color: #222;
-  font-weight: bold;
+  /* color: #222; */
+  /* font-weight: bold; */
 }
 
 .product-price {
@@ -40,4 +43,10 @@
 .product-card:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease;
+}
+
+.carousel-title {
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 0.5px;
 }

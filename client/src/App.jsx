@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes} from 'react-router';
 import Navbar from '/components/navbar/Navbar';
+import Footer from '/components/footer/Footer';
 import Signup from '/pages/signup/Signup';
 import Login from '/pages/login/Login';
 import ProductsPage from '/pages/products/ProductsPage';
@@ -29,6 +30,7 @@ function App() {
             element={<PrivateRoute element={<AdminPage />} />}
           />
         </Routes>
+        <Footer />
       </Router>
     </AuthProvider>
   );

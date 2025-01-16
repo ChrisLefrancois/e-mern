@@ -6,7 +6,7 @@ import ProductCarousel from '../../components/products/productCarousel';
 
 
 const Tcg = [
-  { name: 'Product 1', price: 14.99, image: 'https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=600&type=card' },
+  { name: 'Black Lotus Alpha Editions Near Mint', price: 14.99, image: 'https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=600&type=card' },
   { name: 'Product 2', price: 15.99, image: 'https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=600&type=card' },
   { name: 'Product 3', price: 16.99, image: 'https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=600&type=card' },
   { name: 'Product 4', price: 17.99, image: 'https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=600&type=card' },
@@ -46,7 +46,7 @@ function App() {
     <div className="">
       <Banner />
       <NewProducts />
-      <ProductCarousel title="Tcg's collections" products={Tcg} />
+      <ProductCarousel title="TCG'S COLLECTIONS" products={Tcg} />
       <ProductCarousel title="Sport's collections" products={Sport} />
       <ProductCarousel title="Video Game's collections" products={VideoGame} />
     </div>

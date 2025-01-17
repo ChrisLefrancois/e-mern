@@ -39,7 +39,7 @@ const Footer = () => {
       </div>
       <div className="footer-bottom">
         <p>
-          © 2025 The Card Arcade. All rights reserved. | <a href="/privacy-policy">Privacy Policy</a> | <a href="/terms">Terms of Service</a>
+          © 2025 The Card Arcade. All rights reserved.
         </p>
       </div>
     </footer>

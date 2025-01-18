@@ -11,10 +11,26 @@ const productSchema = new mongoose.Schema({
     genre: { type: mongoose.Schema.Types.ObjectId, ref: 'Genre' },
   },
   cardDetails: {
-    category: { type: String, enum: ['tcg', 'sport'] },
-    sport: { type: mongoose.Schema.Types.ObjectId, ref: 'Sport' }, // For sport cards
-    game: { type: mongoose.Schema.Types.ObjectId, ref: 'Game' }, // For TCG cards
-    set: { type: mongoose.Schema.Types.ObjectId, ref: 'Set' }, // For TCG cards
+    category: {
+      type: String,
+      enum: ['tcg', 'sport'],
+      required: function() { return this.type === 'card'; }
+    },
+    sport: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Sport',
+      required: function() { return this.category === 'sport'; } // Required only if category is 'sport'
+    },
+    game: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tcg',
+      required: function() { return this.category === 'tcg'; } // Required only if category is 'tcg'
+    },
+    set: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Set',
+      required: function() { return this.category === 'tcg'; } // Required only if category is 'tcg'
+    },
     isGraded: { type: Boolean },
   },
 });

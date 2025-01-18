@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ProductsPage.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -36,9 +38,16 @@ const ProductPage = () => {
               alt={product.name}
               className="product-image"
             />
-            <h2 className="product-name">{product.name}</h2>
-            <p className="product-price">${product.price.toFixed(2)}</p>
-            <button className="view-button">View Details</button>
+            <div className="product-name">{product.name}</div>
+            <div className="product-price">${product.price.toFixed(2)}</div>
+            <div className="product-actions">
+              <button href="#" className="product-link">
+                <FontAwesomeIcon icon={faEye} />
+              </button>
+              <button className="product-cart-button">
+                <FontAwesomeIcon icon={faShoppingCart} />
+              </button>
+            </div>
           </div>
         ))}
       </div>

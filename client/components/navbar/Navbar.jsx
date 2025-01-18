@@ -5,8 +5,11 @@ import './Navbar.css';
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <div className="navbar-brand">The Card Arcade</div>
+      <Link to="/">
+        <div className="navbar-brand">The Card Arcade</div>
+      </Link>
       <ul className="navbar-links">
+        <Link to="/products"><li><div>Products</div></li></Link>
         <li><a href="#Games">Games</a></li>
         <li><a href="#TCG">TCG</a></li>
         <li><a href="#Sports">Sports</a></li>

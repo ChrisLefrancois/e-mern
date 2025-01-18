@@ -11,6 +11,7 @@
 .navbar-brand {
   font-size: 1.5rem;
   font-weight: bold;
+  text-decoration: none;
 }
 
 .navbar-links {
@@ -57,4 +58,16 @@
 
 .signup-btn:hover {
   background-color: #0056b3;
+}
+
+/* Remove underline and blue color from the Link component */
+.navbar a,
+.navbar .navbar-links a,
+.navbar .navbar-actions a {
+  text-decoration: none;
+  color: inherit; /* This will make the text color inherit from the parent element */
+}
+
+.navbar .navbar-actions a {
+  color: inherit; /* If you want the buttons to follow the same rule */
 }

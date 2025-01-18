@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const cloudinary = require('cloudinary').v2;
 
 const userRoutes = require('./routes/userRoutes');
 const sportRoutes = require('./routes/sportRoutes');
@@ -12,6 +13,12 @@ const tcgRoutes = require('./routes/tcgRoutes');
 const productRoutes = require('./routes/productRoutes');
 
 dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;

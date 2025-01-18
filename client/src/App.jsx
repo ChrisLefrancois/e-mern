@@ -27,7 +27,7 @@ function App() {
           <Route path="/products/:id" element={<SingleProductPage />} />
           <Route
             path="/admin"
-            element={<PrivateRoute element={<AdminPage />} />}
+            element={<AdminPage />}
           />
         </Routes>
         <Footer />

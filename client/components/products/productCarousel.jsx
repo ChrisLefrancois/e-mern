@@ -20,12 +20,12 @@ const ProductCarousel = ({ title, products }) => {
           <SwiperSlide key={index}>
             <div className="product-card">
               <img src={product.image} alt={product.name} className="product-image" />
-              <h3 className="product-name">{product.name}</h3>
+              <div className="product-name">{product.name}</div>
               <div className="divroduct-price">${product.price.toFixed(2)}</div>
               <div className="product-actions">
-                <a href="#" className="product-link">
+                <button href="#" className="product-link">
                   <FontAwesomeIcon icon={faEye} />
-                </a>
+                </button>
                 <button className="product-cart-button">
                   <FontAwesomeIcon icon={faShoppingCart} />
                 </button>

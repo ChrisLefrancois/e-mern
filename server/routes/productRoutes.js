@@ -1,11 +1,12 @@
 const express = require('express');
 const Product = require("../models/Product");
-const adminMiddleware = require('../middleware/adminMiddleware');
+const authenticateToken = require('../middleware/authenticateMiddleware');
+
 
 const router = express.Router();
 
 // Create a new product
-router.post('/create', adminMiddleware, async (req, res) => {
+router.post('/create', authenticateToken, async (req, res) => {
   try {
     const { name, type, price, quantity, image, videoGameDetails, cardDetails } = req.body;
 
@@ -81,7 +82,7 @@ router.get('/:id', async (req, res) => {
 
 
 // Delete product
-router.delete('/delete/:id', adminMiddleware, async (req, res) => {
+router.delete('/delete/:id', authenticateToken, async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) {

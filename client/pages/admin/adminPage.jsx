@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import api from '/components/api'
 
 const AdminPage = () => {
   const [products, setProducts] = useState([]);
@@ -8,13 +9,15 @@ const AdminPage = () => {
     price: '',
     quantity: '',
     type: '',
+    videoGameDetails: { console: '', genre: '' },
+    cardDetails: { category: '', sport: '', game: '', set: '', isGraded: false },
   });
 
   useEffect(() => {
-    // Fetch products
+    console.log(localStorage.getItem('token'))
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('/api/products');
+        const response = await api.get('/api/products');
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -25,18 +28,36 @@ const AdminPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewProduct({ ...newProduct, [name]: value });
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value,
+    }));
+  };
+
+  const handleDetailsChange = (e, category) => {
+    const { name, value } = e.target;
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      [category]: { ...prevProduct[category], [name]: value },
+    }));
   };
 
   const handleAddProduct = async () => {
     try {
-      const response = await axios.post('/api/products/add', newProduct, {
+      const response = await api.post('/api/products/create', newProduct, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       setProducts([...products, response.data]);
-      setNewProduct({ name: '', price: '', quantity: '', type: '' });
+      setNewProduct({
+        name: '',
+        price: '',
+        quantity: '',
+        type: '',
+        videoGameDetails: { console: '', genre: '' },
+        cardDetails: { category: '', sport: '', game: '', set: '', isGraded: false },
+      });
     } catch (error) {
       console.error('Error adding product:', error);
     }
@@ -44,7 +65,7 @@ const AdminPage = () => {
 
   const handleDeleteProduct = async (id) => {
     try {
-      await axios.delete(`/api/products/delete/${id}`, {
+      await api.delete(`/api/products/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -81,13 +102,86 @@ const AdminPage = () => {
         value={newProduct.quantity}
         onChange={handleInputChange}
       />
-      <input
-        type="text"
-        name="type"
-        placeholder="Type"
-        value={newProduct.type}
-        onChange={handleInputChange}
-      />
+      <select name="type" value={newProduct.type} onChange={handleInputChange}>
+        <option value="">Select Type</option>
+        <option value="video_game">Video Game</option>
+        <option value="card">Card</option>
+      </select>
+
+      {newProduct.type === 'video_game' && (
+        <>
+          <input
+            type="text"
+            name="console"
+            placeholder="Console"
+            value={newProduct.videoGameDetails.console}
+            onChange={(e) => handleDetailsChange(e, 'videoGameDetails')}
+          />
+          <input
+            type="text"
+            name="genre"
+            placeholder="Genre"
+            value={newProduct.videoGameDetails.genre}
+            onChange={(e) => handleDetailsChange(e, 'videoGameDetails')}
+          />
+        </>
+      )}
+
+      {newProduct.type === 'card' && (
+        <>
+          <select
+            name="category"
+            value={newProduct.cardDetails.category}
+            onChange={(e) => handleDetailsChange(e, 'cardDetails')}
+          >
+            <option value="">Select Category</option>
+            <option value="tcg">TCG</option>
+            <option value="sport">Sport</option>
+          </select>
+          {newProduct.cardDetails.category === 'sport' && (
+            <input
+              type="text"
+              name="sport"
+              placeholder="Sport"
+              value={newProduct.cardDetails.sport}
+              onChange={(e) => handleDetailsChange(e, 'cardDetails')}
+            />
+          )}
+          {newProduct.cardDetails.category === 'tcg' && (
+            <>
+              <input
+                type="text"
+                name="game"
+                placeholder="Game"
+                value={newProduct.cardDetails.game}
+                onChange={(e) => handleDetailsChange(e, 'cardDetails')}
+              />
+              <input
+                type="text"
+                name="set"
+                placeholder="Set"
+                value={newProduct.cardDetails.set}
+                onChange={(e) => handleDetailsChange(e, 'cardDetails')}
+              />
+            </>
+          )}
+          <label>
+            <input
+              type="checkbox"
+              name="isGraded"
+              checked={newProduct.cardDetails.isGraded}
+              onChange={(e) =>
+                handleDetailsChange(
+                  { target: { name: 'isGraded', value: e.target.checked } },
+                  'cardDetails'
+                )
+              }
+            />
+            Is Graded
+          </label>
+        </>
+      )}
+
       <button onClick={handleAddProduct}>Add Product</button>
 
       <h2>Products</h2>

@@ -70,11 +70,22 @@ router.post('/create', upload.single('image'), async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+
   try {
-    const products = await Product.find();
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    const products = await Product.find()
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const totalProducts = await Product.countDocuments();  // Get total count for pagination
+
+    res.json({
+      products,
+      totalPages: Math.ceil(totalProducts / limit),
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching products' });
   }
 });
 

@@ -8,12 +8,15 @@ const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);  // Added state for current page
+  const productsPerPage = 20;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products');
-        setProducts(response.data);
+        const response = await axios.get(`http://localhost:5000/api/products?page=${currentPage}&limit=${productsPerPage}`);
+        console.log(response.data);  // Add this line to inspect the structure of the response
+        setProducts(response.data.products); // Assuming the response contains products
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch products.');
@@ -22,10 +25,24 @@ const ProductPage = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [currentPage]);
 
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
+
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="product-page">
@@ -36,7 +53,7 @@ const ProductPage = () => {
             <img
               src={product.image || 'https://via.placeholder.com/150'}
               alt={product.name}
-              className="product-image"
+              className="product-page-image"
             />
             <div className="product-name">{product.name}</div>
             <div className="product-price">${product.price.toFixed(2)}</div>
@@ -50,6 +67,23 @@ const ProductPage = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className="pagination">
+        <button
+          className="pagination-button"
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>{`Page ${currentPage}`}</span>
+        <button
+          className="pagination-button"
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

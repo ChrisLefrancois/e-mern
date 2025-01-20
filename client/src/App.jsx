@@ -6,6 +6,7 @@ import Footer from '/components/footer/Footer';
 import Signup from '/pages/signup/Signup';
 import Login from '/pages/login/Login';
 import ProductsPage from '/pages/products/ProductsPage';
+import SportsProductPage from '/pages/products/sportProductPage';
 import SingleProductPage from '/pages/singleproduct/SingleProductPage';
 import AdminPage from '/pages/admin/adminPage';
 import HomePage from '/pages/home/homePage';
@@ -24,6 +25,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/sports" element={<SportsProductPage />} />
           <Route path="/products/:id" element={<SingleProductPage />} />
           <Route
             path="/admin"

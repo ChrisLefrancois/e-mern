@@ -7,6 +7,8 @@ import Signup from '/pages/signup/Signup';
 import Login from '/pages/login/Login';
 import ProductsPage from '/pages/products/ProductsPage';
 import SportsProductPage from '/pages/products/sportProductPage';
+import VideoGamesProductPage from '/pages/products/videogameProductPage';
+import TcgsProductPage from '/pages/products/tcgProductPage';
 import SingleProductPage from '/pages/singleproduct/SingleProductPage';
 import AdminPage from '/pages/admin/adminPage';
 import HomePage from '/pages/home/homePage';
@@ -26,6 +28,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/sports" element={<SportsProductPage />} />
+          <Route path="/products/tcgs" element={<TcgsProductPage />} />
+          <Route path="/products/videogames" element={<VideoGamesProductPage />} />
           <Route path="/products/:id" element={<SingleProductPage />} />
           <Route
             path="/admin"

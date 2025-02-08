@@ -12,15 +12,15 @@ import TcgsProductPage from '/pages/products/tcgProductPage';
 import SingleProductPage from '/pages/singleproduct/SingleProductPage';
 import AdminPage from '/pages/admin/adminPage';
 import HomePage from '/pages/home/homePage';
-import { AuthProvider } from '../context/AuthContext';
+import  AuthProvider  from '../context/AuthContext';
 import PrivateRoute from '../components/PrivateRoute';
 
 
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+        <AuthProvider>
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -31,14 +31,13 @@ function App() {
           <Route path="/products/tcgs" element={<TcgsProductPage />} />
           <Route path="/products/videogames" element={<VideoGamesProductPage />} />
           <Route path="/products/:id" element={<SingleProductPage />} />
-          <Route
-            path="/admin"
-            element={<AdminPage />}
-          />
+          <Route element={<PrivateRoute />}>
+              <Route path="/admin" element={<AdminPage />} />
+          </Route>
         </Routes>
         <Footer />
-      </Router>
     </AuthProvider>
+      </Router>
   );
 }
 

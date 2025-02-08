@@ -14,7 +14,7 @@ const AdminPage = () => {
   });
 
   useEffect(() => {
-    console.log(localStorage.getItem('token'))
+    console.log(localStorage.getItem('jwtToken'))
     const fetchProducts = async () => {
       try {
         const response = await api.get('/api/products');

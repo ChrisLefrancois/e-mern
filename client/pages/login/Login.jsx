@@ -20,19 +20,25 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/users/login', formData);
+
+      // Make sure to access the token from response.data
       const token = response.data.token;
 
-      // Store the token in localStorage or cookie for future requests
+      if (!token) {
+        throw new Error("Token not received from server.");
+      }
+
+      // Store the token in localStorage for persistence
       localStorage.setItem('jwtToken', token);
 
       setMessage('Login successful!');
       setFormData({ email: '', password: '' }); // Clear the form
     } catch (error) {
+      console.error("Login error:", error);
       const errorMsg = error.response?.data?.message || 'An error occurred during login.';
       setMessage(errorMsg);
     }
   };
-
   return (
     <div className="login-container">
       <h2>Login</h2>

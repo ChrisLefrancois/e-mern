@@ -9,6 +9,9 @@ const AdminPage = () => {
   const [tcgs, setTcgs] = useState([]);
   const [sets, setSets] = useState([]);
 
+  const [consoleName, setConsoleName] = useState('');
+  const [genreName, setGenreName] = useState('');
+
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
@@ -82,6 +85,39 @@ const AdminPage = () => {
     }
   };
 
+  const handleAddConsole = async () => {
+    if (!consoleName.trim()) {
+      alert('Please enter a console name.');
+      return;
+    }
+
+    try {
+      const response = await api.post('/consoles/create', { name: consoleName });
+      setConsoles([...consoles, response.data]); // Update state with the new console
+      setConsoleName(''); // Clear input field
+    } catch (error) {
+      console.error('Error adding console:', error);
+      alert('Failed to add console.');
+    }
+  };
+
+  const handleAddGenre = async () => {
+    if (!genreName.trim()) {
+      alert('Please enter a console name.');
+      return;
+    }
+
+    try {
+      const response = await api.post('/genres/create', { name: genreName });
+      setGenres([...genres, response.data]); // Update state with the new console
+      setGenreName(''); // Clear input field
+    } catch (error) {
+      console.error('Error adding genre:', error);
+      alert('Failed to add genre.');
+    }
+  };
+
+
 
   return (
     <div>
@@ -147,6 +183,26 @@ const AdminPage = () => {
       )}
 
       <button onClick={handleAddProduct}>Add Product</button>
+
+      <h2>Add Console</h2>
+      <input
+        type="text"
+        placeholder="Console Name"
+        value={consoleName}
+        onChange={(e) => setConsoleName(e.target.value)}
+      />
+      <button onClick={handleAddConsole}>Add Console</button>
+
+      <h2>Add Genre</h2>
+      <input
+        type="text"
+        placeholder="Genre Name"
+        value={genreName}
+        onChange={(e) => setGenreName(e.target.value)}
+      />
+      <button onClick={handleAddGenre}>Add Console</button>
+
+
     </div>
   );
 };

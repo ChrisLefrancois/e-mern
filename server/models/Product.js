@@ -7,29 +7,33 @@ const productSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   image: { type: String },
   videoGameDetails: {
-    console: { type: mongoose.Schema.Types.ObjectId, ref: 'Console' },
-    genre: { type: mongoose.Schema.Types.ObjectId, ref: 'Genre' },
+    console: { type: mongoose.Schema.Types.ObjectId, ref: 'Console', default: null },
+    genre: { type: mongoose.Schema.Types.ObjectId, ref: 'Genre', default: null },
   },
   cardDetails: {
     category: {
       type: String,
       enum: ['tcg', 'sport'],
-      required: function() { return this.type === 'card'; }
+      required: function() { return this.type === 'card'; },
+      default: null
     },
     sport: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Sport',
-      required: function() { return this.category === 'sport'; } // Required only if category is 'sport'
+      required: function() { return this.category === 'sport'; },
+      default: null // Required only if category is 'sport'
     },
     game: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Tcg',
-      required: function() { return this.category === 'tcg'; } // Required only if category is 'tcg'
+      required: function() { return this.category === 'tcg'; },
+      default: null // Required only if category is 'tcg'
     },
     set: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Set',
-      required: function() { return this.category === 'tcg'; } // Required only if category is 'tcg'
+      required: function() { return this.category === 'tcg'; },
+      default: null // Required only if category is 'tcg'
     },
     isGraded: { type: Boolean },
   },

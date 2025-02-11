@@ -1,8 +1,10 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // Import useAuth for checking user status
 import './Navbar.css';
 
 const Navbar = () => {
+  const { user, logOut } = useAuth(); // Access user and logOut from context
+
   return (
     <nav className="navbar">
       <Link to="/">
@@ -17,12 +19,21 @@ const Navbar = () => {
         <li><a href="#Contact">Contact</a></li>
       </ul>
       <div className="navbar-actions">
-      <Link to="/login">
-        <button className="btn login-btn">Login</button>
-      </Link>
-      <Link to="/signup">
-        <button className="btn signup-btn">Sign Up</button>
-      </Link>
+        {/* Check if the user is logged in */}
+        {!user ? (
+          <>
+            <Link to="/login">
+              <button className="btn login-btn">Login</button>
+            </Link>
+            <Link to="/signup">
+              <button className="btn signup-btn">Sign Up</button>
+            </Link>
+          </>
+        ) : (
+          <button className="btn logout-btn" onClick={logOut}>
+            Logout
+          </button>
+        )}
       </div>
     </nav>
   );

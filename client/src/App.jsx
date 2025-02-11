@@ -1,5 +1,4 @@
 import './App.css';
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes} from 'react-router';
 import Navbar from '/components/navbar/Navbar';
 import Footer from '/components/footer/Footer';
@@ -12,6 +11,7 @@ import TcgsProductPage from '/pages/products/tcgProductPage';
 import SingleProductPage from '/pages/singleproduct/SingleProductPage';
 import AdminPage from '/pages/admin/adminPage';
 import HomePage from '/pages/home/homePage';
+import Logout from '/components/logout'
 import  AuthProvider  from '../context/AuthContext';
 import PrivateRoute from '../components/PrivateRoute';
 
@@ -26,6 +26,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<Logout />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/sports" element={<SportsProductPage />} />
           <Route path="/products/tcgs" element={<TcgsProductPage />} />

@@ -8,19 +8,6 @@ const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("jwtToken") || "");
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const storedToken = localStorage.getItem("jwtToken");
-  //   if (storedToken) {
-  //     setToken(storedToken);
-  //     fetch("http://localhost:5000/api/users/me", {
-  //       headers: { Authorization: `Bearer ${storedToken}` },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => setUser(data.user))
-  //       .catch(() => logOut());
-  //   }
-  // }, []);
-
   const loginAction = async (data) => {
     try {
       const response = await fetch("api/users/login", {
@@ -44,12 +31,19 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-
+    // On component mount, check if there's a token in localStorage
+    useEffect(() => {
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        // Assuming your API sends back user data after successful login
+        setUser({ token });
+      }
+    }, []);
 
   const logOut = () => {
     setUser(null);
     setToken("");
-    localStorage.removeItem("site");
+    localStorage.removeItem("jwtToken");
     navigate("/login");
   };
 

@@ -1,89 +1,93 @@
 const express = require('express');
-const Product = require("../models/Product");
+const mongoose = require('mongoose');
+const Product = require('../models/Product');
 const cloudinary = require('cloudinary').v2;
-const multer = require('multer'); // Import multer
+const multer = require('multer');
 
 const router = express.Router();
-
-// Set up multer for handling image file uploads
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage });
+
+const sanitizeObjectIdFields = (obj, fields) => {
+  fields.forEach(field => {
+    const keys = field.split('.');
+    let tempObj = obj;
+    for (let i = 0; i < keys.length - 1; i++) {
+      tempObj = tempObj[keys[i]];
+      if (!tempObj) return;
+    }
+    if (tempObj[keys[keys.length - 1]] === "") {
+      tempObj[keys[keys.length - 1]] = null;
+    }
+  });
+};
 
 // Create a new product with image upload
-
-// Create a new product
 router.post('/create', upload.single('image'), async (req, res) => {
   try {
-    // Check if the image is provided
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
     }
 
-    // Log request body and file to verify
+    if (!req.file.mimetype.startsWith('image/')) {
+      return res.status(400).json({ error: 'Invalid file type. Please upload an image.' });
+    }
+
     console.log('Request Body:', req.body);
     console.log('Uploaded File:', req.file);
 
-    // Upload the image to Cloudinary using the file buffer
-    cloudinary.uploader.upload_stream(
-      { resource_type: 'auto' },
-      async (error, result) => {
-        if (error) {
-          console.error('Cloudinary upload error:', error);
-          return res.status(500).json({ error: 'Error uploading image to Cloudinary' });
-        }
+    const { name, type, price, quantity } = req.body;
+    if (!name || !type || !price || !quantity) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
 
-        // Get the Cloudinary image URL
-        const imageUrl = result.secure_url;
+    let productData = { ...req.body };
+    try {
+      productData.videoGameDetails = JSON.parse(req.body.videoGameDetails || '{}');
+      productData.cardDetails = JSON.parse(req.body.cardDetails || '{}');
+    } catch (error) {
+      return res.status(400).json({ error: 'Invalid JSON format in details' });
+    }
 
-        // Parse videoGameDetails if it exists
-        let videoGameDetails = req.body.videoGameDetails ? JSON.parse(req.body.videoGameDetails) : null;
+    const objectIdFields = [
+      "videoGameDetails.console",
+      "videoGameDetails.genre",
+      "cardDetails.game",
+      "cardDetails.set"
+    ];
+    sanitizeObjectIdFields(productData, objectIdFields);
 
-        // Extract product details
-        const { name, type, price, quantity } = req.body;
+    if (type === 'video_game' && (!productData.videoGameDetails.console || !productData.videoGameDetails.genre)) {
+      return res.status(400).json({ error: 'Missing video game details' });
+    }
 
-        // Validate for video_game type
-        if (type === 'video_game') {
-          if (!videoGameDetails || !videoGameDetails.console || !videoGameDetails.genre) {
-            return res.status(400).json({ error: 'Missing video game details' });
-          }
-        }
-
-        // Create a new product
-        const newProduct = new Product({
-          name,
-          type,
-          price,
-          quantity,
-          image: imageUrl, // Store Cloudinary image URL
-          videoGameDetails,
-        });
-
-        // Save the product
-        const savedProduct = await newProduct.save();
-        res.status(201).json(savedProduct);
+    cloudinary.uploader.upload_stream({ resource_type: 'image' }, async (error, result) => {
+      if (error) {
+        console.error('Cloudinary upload error:', error);
+        return res.status(500).json({ error: 'Error uploading image to Cloudinary' });
       }
-    ).end(req.file.buffer); // Call end() with the buffer as argument
+
+      productData.image = result.secure_url;
+
+      const newProduct = new Product(productData);
+      const savedProduct = await newProduct.save();
+      res.status(201).json(savedProduct);
+    }).end(req.file.buffer);
   } catch (err) {
-    console.error(err);
+    console.error('Server error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+// Get all products with pagination
 router.get('/', async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
 
   try {
-    const products = await Product.find()
-      .skip((page - 1) * limit)
-      .limit(limit);
-
-    const totalProducts = await Product.countDocuments();  // Get total count for pagination
-
-    res.json({
-      products,
-      totalPages: Math.ceil(totalProducts / limit),
-    });
+    const products = await Product.find().skip((page - 1) * limit).limit(limit);
+    const totalProducts = await Product.countDocuments();
+    res.json({ products, totalPages: Math.ceil(totalProducts / limit) });
   } catch (err) {
     res.status(500).json({ error: 'Error fetching products' });
   }
@@ -92,20 +96,20 @@ router.get('/', async (req, res) => {
 // Get a specific product by ID
 router.get('/:id', async (req, res) => {
   try {
-    const productId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid product ID format' });
+    }
 
-    // Find product by ID
-    const product = await Product.findById(productId)
-      .populate('videoGameDetails.console', 'name') // Populates console name
-      .populate('videoGameDetails.genre', 'name')   // Populates genre name
-      .populate('cardDetails.sport', 'name')       // Populates sport name (for cards)
-      .populate('cardDetails.game', 'name')        // Populates game name (for TCG)
-      .populate('cardDetails.set', 'name');        // Populates set name (for TCG)
+    const product = await Product.findById(req.params.id)
+      .populate('videoGameDetails.console', 'name')
+      .populate('videoGameDetails.genre', 'name')
+      .populate('cardDetails.sport', 'name')
+      .populate('cardDetails.game', 'name')
+      .populate('cardDetails.set', 'name');
 
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
-
     res.status(200).json(product);
   } catch (err) {
     console.error(err);
@@ -113,16 +117,16 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Delete product
+// Delete a product
 router.delete('/delete/:id', async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ error: 'Product not found' });
     }
     res.status(200).json({ message: 'Product deleted' });
   } catch (err) {
-    res.status(400).json({ message: 'Error deleting product', error: err.message });
+    res.status(400).json({ error: 'Error deleting product', details: err.message });
   }
 });
 

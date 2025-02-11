@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import api from '/components/api'
+import { useState, useEffect } from 'react';
+import api from '/components/api';
 
 const AdminPage = () => {
   const [products, setProducts] = useState([]);
+  const [consoles, setConsoles] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [sports, setSports] = useState([]);
+  const [tcgs, setTcgs] = useState([]);
+  const [sets, setSets] = useState([]);
+
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
@@ -11,97 +16,82 @@ const AdminPage = () => {
     type: '',
     videoGameDetails: { console: '', genre: '' },
     cardDetails: { category: '', sport: '', game: '', set: '', isGraded: false },
+    image: null,
   });
 
   useEffect(() => {
-    console.log(localStorage.getItem('jwtToken'))
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get('/api/products');
-        setProducts(response.data);
+        const [productRes, consoleRes, genreRes, sportRes, tcgRes, setRes] = await Promise.all([
+          api.get('/products'),
+          api.get('/consoles'),
+          api.get('/genres'),
+          api.get('/sports'),
+          api.get('/tcgs'),
+          api.get('/sets')
+        ]);
+        setProducts(productRes.data);
+        setConsoles(consoleRes.data);
+        setGenres(genreRes.data);
+        setSports(sportRes.data);
+        setTcgs(tcgRes.data);
+        setSets(setRes.data);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching data:', error);
       }
     };
-    fetchProducts();
+    fetchData();
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
+    setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDetailsChange = (e, category) => {
     const { name, value } = e.target;
-    setNewProduct((prevProduct) => ({
-      ...prevProduct,
-      [category]: { ...prevProduct[category], [name]: value },
+    setNewProduct((prev) => ({
+      ...prev,
+      [category]: { ...prev[category], [name]: value },
     }));
   };
 
   const handleAddProduct = async () => {
     try {
-      const response = await api.post('/api/products/create', newProduct, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      const formData = new FormData();
+      formData.append('name', newProduct.name);
+      formData.append('price', newProduct.price);
+      formData.append('quantity', newProduct.quantity);
+      formData.append('type', newProduct.type);
+      formData.append('videoGameDetails', JSON.stringify(newProduct.videoGameDetails));
+      formData.append('cardDetails', JSON.stringify(newProduct.cardDetails));
+
+      if (newProduct.image) {
+        formData.append('image', newProduct.image);
+      }
+
+      const response = await api.post('/products/create', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setProducts([...products, response.data]);
-      setNewProduct({
-        name: '',
-        price: '',
-        quantity: '',
-        type: '',
-        videoGameDetails: { console: '', genre: '' },
-        cardDetails: { category: '', sport: '', game: '', set: '', isGraded: false },
-      });
+
+      setProducts((prevProducts) => Array.isArray(prevProducts) ? [...prevProducts, response.data] : [response.data]);
+
     } catch (error) {
       console.error('Error adding product:', error);
+      alert('Failed to add product.');
     }
   };
 
-  const handleDeleteProduct = async (id) => {
-    try {
-      await api.delete(`/api/products/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setProducts(products.filter((product) => product._id !== id));
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
-  };
 
   return (
     <div>
       <h1>Admin Page</h1>
 
       <h2>Add Product</h2>
-      <input
-        type="text"
-        name="name"
-        placeholder="Name"
-        value={newProduct.name}
-        onChange={handleInputChange}
-      />
-      <input
-        type="text"
-        name="price"
-        placeholder="Price"
-        value={newProduct.price}
-        onChange={handleInputChange}
-      />
-      <input
-        type="text"
-        name="quantity"
-        placeholder="Quantity"
-        value={newProduct.quantity}
-        onChange={handleInputChange}
-      />
+      <input type="text" name="name" placeholder="Name" value={newProduct.name} onChange={handleInputChange} />
+      <input type="number" name="price" placeholder="Price" value={newProduct.price} onChange={handleInputChange} />
+      <input type="number" name="quantity" placeholder="Quantity" value={newProduct.quantity} onChange={handleInputChange} />
+      <input type="file" accept="image/*" onChange={(e) => setNewProduct({ ...newProduct, image: e.target.files[0] })} />
       <select name="type" value={newProduct.type} onChange={handleInputChange}>
         <option value="">Select Type</option>
         <option value="video_game">Video Game</option>
@@ -110,89 +100,53 @@ const AdminPage = () => {
 
       {newProduct.type === 'video_game' && (
         <>
-          <input
-            type="text"
-            name="console"
-            placeholder="Console"
-            value={newProduct.videoGameDetails.console}
-            onChange={(e) => handleDetailsChange(e, 'videoGameDetails')}
-          />
-          <input
-            type="text"
-            name="genre"
-            placeholder="Genre"
-            value={newProduct.videoGameDetails.genre}
-            onChange={(e) => handleDetailsChange(e, 'videoGameDetails')}
-          />
+          <select name="console" value={newProduct.videoGameDetails.console} onChange={(e) => handleDetailsChange(e, 'videoGameDetails')}>
+            <option value="">Select Console</option>
+            {consoles.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
+          </select>
+          <select name="genre" value={newProduct.videoGameDetails.genre} onChange={(e) => handleDetailsChange(e, 'videoGameDetails')}>
+            <option value="">Select Genre</option>
+            {genres.map((g) => <option key={g._id} value={g._id}>{g.name}</option>)}
+          </select>
         </>
       )}
 
       {newProduct.type === 'card' && (
         <>
-          <select
-            name="category"
-            value={newProduct.cardDetails.category}
-            onChange={(e) => handleDetailsChange(e, 'cardDetails')}
-          >
+          <select name="category" value={newProduct.cardDetails.category} onChange={(e) => handleDetailsChange(e, 'cardDetails')}>
             <option value="">Select Category</option>
             <option value="tcg">TCG</option>
             <option value="sport">Sport</option>
           </select>
+
           {newProduct.cardDetails.category === 'sport' && (
-            <input
-              type="text"
-              name="sport"
-              placeholder="Sport"
-              value={newProduct.cardDetails.sport}
-              onChange={(e) => handleDetailsChange(e, 'cardDetails')}
-            />
+            <select name="sport" value={newProduct.cardDetails.sport} onChange={(e) => handleDetailsChange(e, 'cardDetails')}>
+              <option value="">Select Sport</option>
+              {sports.map((s) => <option key={s._id} value={s._id}>{s.name}</option>)}
+            </select>
           )}
+
           {newProduct.cardDetails.category === 'tcg' && (
             <>
-              <input
-                type="text"
-                name="game"
-                placeholder="Game"
-                value={newProduct.cardDetails.game}
-                onChange={(e) => handleDetailsChange(e, 'cardDetails')}
-              />
-              <input
-                type="text"
-                name="set"
-                placeholder="Set"
-                value={newProduct.cardDetails.set}
-                onChange={(e) => handleDetailsChange(e, 'cardDetails')}
-              />
+              <select name="game" value={newProduct.cardDetails.game} onChange={(e) => handleDetailsChange(e, 'cardDetails')}>
+                <option value="">Select Game</option>
+                {tcgs.map((t) => <option key={t._id} value={t._id}>{t.name}</option>)}
+              </select>
+              <select name="set" value={newProduct.cardDetails.set} onChange={(e) => handleDetailsChange(e, 'cardDetails')}>
+                <option value="">Select Set</option>
+                {sets.map((s) => <option key={s._id} value={s._id}>{s.name}</option>)}
+              </select>
             </>
           )}
+
           <label>
-            <input
-              type="checkbox"
-              name="isGraded"
-              checked={newProduct.cardDetails.isGraded}
-              onChange={(e) =>
-                handleDetailsChange(
-                  { target: { name: 'isGraded', value: e.target.checked } },
-                  'cardDetails'
-                )
-              }
-            />
+            <input type="checkbox" name="isGraded" checked={newProduct.cardDetails.isGraded} onChange={(e) => handleDetailsChange({ target: { name: 'isGraded', value: e.target.checked } }, 'cardDetails')} />
             Is Graded
           </label>
         </>
       )}
 
       <button onClick={handleAddProduct}>Add Product</button>
-
-      <h2>Products</h2>
-      <ul>
-        {products.map((product) => (
-          <li key={product._id}>
-            {product.name} - ${product.price} - {product.quantity} units
-            <button onClick={() => handleDeleteProduct(product._id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };

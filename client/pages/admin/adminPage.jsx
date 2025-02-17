@@ -11,6 +11,11 @@ const AdminPage = () => {
 
   const [consoleName, setConsoleName] = useState('');
   const [genreName, setGenreName] = useState('');
+  const [tcgName, setTcgName] = useState('');
+  const [setName, setSetName] = useState('');
+  const [sportName, setSportName] = useState('');
+
+
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -117,6 +122,53 @@ const AdminPage = () => {
     }
   };
 
+  const handleAddTcg = async () => {
+    if (!tcgName.trim()) {
+      alert('Please enter a Tcg name.');
+      return;
+    }
+
+    try {
+      const response = await api.post('/tcgs/create', { name: tcgName });
+      setTcgs([...tcgs, response.data]); // Update state with the new console
+      setTcgName(''); // Clear input field
+    } catch (error) {
+      console.error('Error adding tcg:', error);
+      alert('Failed to add tcg.');
+    }
+  };
+
+  const handleAddSet = async () => {
+    if (!setName.trim()) {
+      alert('Please enter a Set name.');
+      return;
+    }
+
+    try {
+      const response = await api.post('/sets/create', { name: setName });
+      setSets([...sets, response.data]); // Update state with the new console
+      setSetName(''); // Clear input field
+    } catch (error) {
+      console.error('Error adding set:', error);
+      alert('Failed to add set.');
+    }
+  };
+
+  const handleAddSport = async () => {
+    if (!sportName.trim()) {
+      alert('Please enter a Sport name.');
+      return;
+    }
+
+    try {
+      const response = await api.post('/sports/create', { name: sportName });
+      setSports([...sports, response.data]); // Update state with the new console
+      setSportName(''); // Clear input field
+    } catch (error) {
+      console.error('Error adding sport:', error);
+      alert('Failed to add sport.');
+    }
+  };
 
 
   return (
@@ -200,7 +252,34 @@ const AdminPage = () => {
         value={genreName}
         onChange={(e) => setGenreName(e.target.value)}
       />
-      <button onClick={handleAddGenre}>Add Console</button>
+      <button onClick={handleAddGenre}>Add Genre</button>
+
+      <h2>Add Tcg</h2>
+      <input
+        type="text"
+        placeholder="Tcg Name"
+        value={tcgName}
+        onChange={(e) => setTcgName(e.target.value)}
+      />
+      <button onClick={handleAddTcg}>Add Tcg</button>
+
+      <h2>Add Set</h2>
+      <input
+        type="text"
+        placeholder="set Name"
+        value={setName}
+        onChange={(e) => setSetName(e.target.value)}
+      />
+      <button onClick={handleAddSet}>Add Tcg Set</button>
+
+      <h2>Add Sport</h2>
+      <input
+        type="text"
+        placeholder="sport Name"
+        value={sportName}
+        onChange={(e) => setSportName(e.target.value)}
+      />
+      <button onClick={handleAddSport}>Add Sport</button>
 
 
     </div>

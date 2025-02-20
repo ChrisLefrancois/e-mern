@@ -31,7 +31,9 @@ const TcgProductPage = () => {
 
   return (
     <div className="product-page">
-      <h1>Tcgs Cards</h1>
+       <div className="products-type">
+        <h1>Trading Card Games</h1>
+      </div>
       <div className="product-grid">
         {products.map(product => (
           <div key={product._id} className="product-card">

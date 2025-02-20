@@ -56,7 +56,12 @@ const SingleProductPage = () => {
           <div className="product-details">
             <h1 className="product-name">{product.name}</h1>
             <p className="product-price">${product.price.toFixed(2)}</p>
-            <p className="product-description">{product.description}</p>
+
+            {product.type === 'video_game' && (
+              <>
+                <p><strong>Video Game</strong></p>
+              </>
+            )}
 
             {product.type === 'card' && (
               <>

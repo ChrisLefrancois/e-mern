@@ -46,7 +46,9 @@ const ProductPage = () => {
 
   return (
     <div className="product-page">
-      <h1>Products</h1>
+      <div className="products-type">
+        <h1>All Products</h1>
+      </div>
       <div className="product-grid">
         {products.map((product) => (
           <div key={product._id} className="product-card">

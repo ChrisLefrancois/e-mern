@@ -100,6 +100,7 @@ router.get('/:id', async (req, res) => {
       return res.status(400).json({ error: 'Invalid product ID format' });
     }
 
+    // Fetch the specific product
     const product = await Product.findById(req.params.id)
       .populate('videoGameDetails.console', 'name')
       .populate('videoGameDetails.genre', 'name')
@@ -110,13 +111,36 @@ router.get('/:id', async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
-    res.status(200).json(product);
-    console.log(product);
+
+    // Define the query for related products
+    let relatedProductsQuery = { _id: { $ne: product._id } }; // Exclude the current product
+
+    // If the product is a video game, fetch other video games
+    if (product.type === 'video_game') {
+      relatedProductsQuery.type = 'video_game';
+    }
+
+    // If the product is a card, fetch other cards, considering the category (tcg or sport)
+    if (product.type === 'card') {
+      relatedProductsQuery.type = 'card';
+
+      if (product.cardDetails.category === 'tcg') {
+        relatedProductsQuery['cardDetails.category'] = 'tcg';
+      } else if (product.cardDetails.category === 'sport') {
+        relatedProductsQuery['cardDetails.category'] = 'sport';
+      }
+    }
+
+    // Fetch related products based on the query
+    const relatedProducts = await Product.find(relatedProductsQuery).limit(3);
+
+    res.status(200).json({ product, relatedProducts });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Delete a product
 router.delete('/delete/:id', async (req, res) => {

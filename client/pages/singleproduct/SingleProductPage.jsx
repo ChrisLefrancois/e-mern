@@ -6,6 +6,7 @@ import './SingleProductPage.css';
 const SingleProductPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -15,7 +16,8 @@ const SingleProductPage = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/products/${id}`);
-        setProduct(response.data);
+        setProduct(response.data.product);
+        setRelatedProducts(response.data.relatedProducts);
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch product details.');
@@ -122,6 +124,23 @@ const SingleProductPage = () => {
           </div>
         </div>
       )}
+      <h1>You may also like</h1>
+
+      <div className="related-products">
+        <div className="related-products-list">
+          {relatedProducts.map((relatedProduct) => (
+            <div className="related-product" key={relatedProduct._id}>
+              <img
+                src={relatedProduct.image || 'https://via.placeholder.com/150'}
+                alt={relatedProduct.name}
+                className="related-product-image"
+              />
+              <p>{relatedProduct.name}</p>
+              <p>${relatedProduct.price.toFixed(2)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

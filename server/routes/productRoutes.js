@@ -111,6 +111,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
     res.status(200).json(product);
+    console.log(product);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });

@@ -10,6 +10,7 @@ const SingleProductPage = () => {
   const [error, setError] = useState('');
   const [quantity, setQuantity] = useState(1);
 
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -26,9 +27,22 @@ const SingleProductPage = () => {
   }, [id]);
 
 
+  const decreaseQuantity = () => {
+    setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+  };
+
+  const increaseQuantity = () => {
+    setQuantity(prev => (prev < product.quantity ? prev + 1 : product.quantity));
+  };
+
   const handleQuantityChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    if (value > 0 && value <= product.quantity) {
+    let value = parseInt(e.target.value, 10);
+
+    if (isNaN(value) || value < 1) {
+      setQuantity(1);
+    } else if (value > product.quantity) {
+      setQuantity(product.quantity);
+    } else {
       setQuantity(value);
     }
   };
@@ -59,20 +73,24 @@ const SingleProductPage = () => {
 
             {product.type === 'video_game' && (
               <>
-                <p>product type: <strong>Video Game</strong></p>
+                <p><strong>product type:</strong> Video Game</p>
               </>
             )}
 
             {product.type === 'card' && (
               <>
-                <p><strong>Type:</strong> {product.cardType}</p>
+                <p><strong>Type:</strong> {product.cardDetails.category}</p>
                 <p><strong>Graded:</strong> {product.isGraded ? 'Yes' : 'No'}</p>
-                {product.cardType === 'sport' && <p><strong>Sport:</strong> {product.sport}</p>}
-                {product.cardType === 'tcg' && <p><strong>Set:</strong> {product.set}</p>}
+                {product.cardDetails.category === 'sport' && product.cardDetails.sport && (
+                  <p><strong>Sport:</strong> {product.cardDetails.sport.name}</p>
+                )}
+                {product.cardDetails.category === 'tcg' && product.cardDetails.set && (
+                  <p><strong>Set:</strong> {product.cardDetails.set.name}</p>
+                )}
               </>
             )}
 
-            {product.videoGameDetails && (
+            {product.type === "video_game" && (
               <>
                 <p><strong>Console:</strong> {product.videoGameDetails.console.name}</p>
                 <p><strong>Genre:</strong> {product.videoGameDetails.genre.name}</p>
@@ -81,18 +99,22 @@ const SingleProductPage = () => {
 
             <p className="product-stock">Hurry! Only <span>{product.quantity}</span> units left in stock!</p>
             <div className="stock-bar">
-              <div className="stock-fill" style={{ width: `${(product.quantity / 100) * 100}%` }}></div>
+              <div className="stock-fill" style={{ width: `${(product.quantity / 30) * 100}%` }}></div>
             </div>
 
             <div className="quantity-cart">
+            <div className="quantity-selector">
+              <button onClick={decreaseQuantity} className="quantity-btn">-</button>
               <input
-                type="number"
+                type="text"
                 value={quantity}
                 min="1"
                 max={product.quantity}
                 onChange={handleQuantityChange}
                 className="quantity-input"
               />
+              <button onClick={increaseQuantity} className="quantity-btn">+</button>
+            </div>
               <button onClick={handleAddToCart} className="add-to-cart-button">
                 Add to Cart
               </button>

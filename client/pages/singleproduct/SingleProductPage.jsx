@@ -28,7 +28,7 @@ const SingleProductPage = () => {
 
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value, 10);
-    if (value > 0 && value <= product.stock) {
+    if (value > 0 && value <= product.quantity) {
       setQuantity(value);
     }
   };
@@ -50,16 +50,16 @@ const SingleProductPage = () => {
             <img
               src={product.image || 'https://via.placeholder.com/300'}
               alt={product.name}
-              className="product-image"
+              className="product-image-show"
             />
           </div>
           <div className="product-details">
             <h1 className="product-name">{product.name}</h1>
-            <p className="product-price">${product.price.toFixed(2)}</p>
+            <p className="product-price-show">${product.price.toFixed(2)}</p>
 
             {product.type === 'video_game' && (
               <>
-                <p><strong>Video Game</strong></p>
+                <p>product type: <strong>Video Game</strong></p>
               </>
             )}
 
@@ -79,12 +79,17 @@ const SingleProductPage = () => {
               </>
             )}
 
-<div className="quantity-cart">
+            <p className="product-stock">Hurry! Only <span>{product.quantity}</span> units left in stock!</p>
+            <div className="stock-bar">
+              <div className="stock-fill" style={{ width: `${(product.quantity / 100) * 100}%` }}></div>
+            </div>
+
+            <div className="quantity-cart">
               <input
                 type="number"
                 value={quantity}
                 min="1"
-                max={product.stock}
+                max={product.quantity}
                 onChange={handleQuantityChange}
                 className="quantity-input"
               />

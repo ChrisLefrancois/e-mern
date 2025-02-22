@@ -11,6 +11,7 @@ const genreRoutes = require('./routes/genreRoutes');
 const setRoutes = require('./routes/setRoutes');
 const tcgRoutes = require('./routes/tcgRoutes');
 const productRoutes = require('./routes/productRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use('/api/sets', setRoutes)
 app.use('/api/tcgs', tcgRoutes)
 // Use the product routes
 app.use('/api/products', productRoutes)
+app.use('/api/cart', cartRoutes);
 
 // MongoDB Connection
 mongoose

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { CartContext } from '/context/CartContext';
 import './SingleProductPage.css';
 
 const SingleProductPage = () => {
@@ -10,6 +11,8 @@ const SingleProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [quantity, setQuantity] = useState(1);
+
+  const { addToCart } = useContext(CartContext);
 
 
   useEffect(() => {
@@ -50,10 +53,8 @@ const SingleProductPage = () => {
   };
 
   const handleAddToCart = () => {
-    // Implement the add to cart functionality here
-    console.log(`Added ${quantity} of ${product.name} to the cart`);
+    addToCart(product, quantity); // Call addToCart from context
   };
-
 
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;

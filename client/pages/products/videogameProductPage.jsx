@@ -3,6 +3,8 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import './ProductsPage.css';
+import { Link } from 'react-router-dom';
+
 
 const VideoGameProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -37,17 +39,21 @@ const VideoGameProductPage = () => {
       <div className="product-grid">
         {products.map(product => (
           <div key={product._id} className="product-card">
+          <Link to={`/products/${product._id}`}>
             <img
               src={product.image || 'https://via.placeholder.com/150'}
               alt={product.name}
               className="product-page-image"
             />
-            <div className="product-name">{product.name}</div>
+          </Link>
+            <Link to={`/products/${product._id}`} className="product-name">
+              {product.name}
+            </Link>
             <div className="product-price">${product.price.toFixed(2)}</div>
             <div className="product-actions">
-              <button href="#" className="product-link">
-                <FontAwesomeIcon icon={faEye} />
-              </button>
+            <Link to={`/products/${product._id}`} className="product-link">
+              <button><FontAwesomeIcon icon={faEye} /></button>
+            </Link>
               <button className="product-cart-button">
                 <FontAwesomeIcon icon={faShoppingCart} />
               </button>

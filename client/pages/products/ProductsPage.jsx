@@ -3,20 +3,22 @@ import axios from 'axios';
 import './ProductsPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);  // Added state for current page
+  const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/products?page=${currentPage}&limit=${productsPerPage}`);
-        console.log(response.data);  // Add this line to inspect the structure of the response
-        setProducts(response.data.products); // Assuming the response contains products
+        const response = await axios.get(
+          `http://localhost:5000/api/products?page=${currentPage}&limit=${productsPerPage}`
+        );
+        setProducts(response.data.products);
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch products.');
@@ -32,18 +34,6 @@ const ProductPage = () => {
 
   const totalPages = Math.ceil(products.length / productsPerPage);
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
   return (
     <div className="product-page">
       <div className="products-type">
@@ -52,17 +42,21 @@ const ProductPage = () => {
       <div className="product-grid">
         {products.map((product) => (
           <div key={product._id} className="product-card">
-            <img
-              src={product.image || 'https://via.placeholder.com/150'}
-              alt={product.name}
-              className="product-page-image"
-            />
-            <div className="product-name">{product.name}</div>
+            <Link to={`/products/${product._id}`}>
+              <img
+                src={product.image || 'https://via.placeholder.com/150'}
+                alt={product.name}
+                className="product-page-image"
+              />
+            </Link>
+            <Link to={`/products/${product._id}`} className="product-name">
+              {product.name}
+            </Link>
             <div className="product-price">${product.price.toFixed(2)}</div>
             <div className="product-actions">
-              <button href="#" className="product-link">
-                <FontAwesomeIcon icon={faEye} />
-              </button>
+              <Link to={`/products/${product._id}`} className="product-link">
+                <button><FontAwesomeIcon icon={faEye} /></button>
+              </Link>
               <button className="product-cart-button">
                 <FontAwesomeIcon icon={faShoppingCart} />
               </button>
@@ -73,7 +67,7 @@ const ProductPage = () => {
       <div className="pagination">
         <button
           className="pagination-button"
-          onClick={handlePrevPage}
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
           Previous
@@ -81,7 +75,7 @@ const ProductPage = () => {
         <span>{`Page ${currentPage}`}</span>
         <button
           className="pagination-button"
-          onClick={handleNextPage}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
           disabled={currentPage === totalPages}
         >
           Next

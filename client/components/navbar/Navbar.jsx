@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext'; // Import useAuth for checking user status
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'; // Import cart icon
 import './Navbar.css';
 
 const Navbar = () => {
@@ -11,15 +13,14 @@ const Navbar = () => {
         <div className="navbar-brand">The Card Arcade</div>
       </Link>
       <ul className="navbar-links">
-        <Link to="/products"><li><div>Products</div></li></Link>
-        <Link to="/products/sports"><li><div>Sports</div></li></Link>
-        <Link to="/products/tcgs"><li><div>Tcgs</div></li></Link>
-        <Link to="/products/videogames"><li><div>Games</div></li></Link>
+        <li><Link to="/products">Products</Link></li>
+        <li><Link to="/products/sports">Sports</Link></li>
+        <li><Link to="/products/tcgs">Tcgs</Link></li>
+        <li><Link to="/products/videogames">Games</Link></li>
         <li><a href="#About">About</a></li>
         <li><a href="#Contact">Contact</a></li>
       </ul>
       <div className="navbar-actions">
-        {/* Check if the user is logged in */}
         {!user ? (
           <>
             <Link to="/login">
@@ -30,9 +31,15 @@ const Navbar = () => {
             </Link>
           </>
         ) : (
-          <button className="btn logout-btn" onClick={logOut}>
-            Logout
-          </button>
+          <>
+            {/* Cart Icon Link */}
+            <Link to="/cart" className="cart-icon">
+              <FontAwesomeIcon icon={faShoppingCart} size="lg" />
+            </Link>
+            <button className="btn logout-btn" onClick={logOut}>
+              Logout
+            </button>
+          </>
         )}
       </div>
     </nav>

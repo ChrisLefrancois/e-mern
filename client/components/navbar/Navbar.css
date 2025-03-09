@@ -71,3 +71,10 @@
 .navbar .navbar-actions a {
   color: inherit; /* If you want the buttons to follow the same rule */
 }
+
+.cart-icon {
+  color: white; /* Change to your desired color */
+  font-size: 1.5rem; /* Adjust size */
+  margin-right: 15px; /* Adjust spacing */
+  text-decoration: none; /* Remove underline */
+}
